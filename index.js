@@ -2,9 +2,9 @@
 First time? Check out the tutorial game:
 https://sprig.hackclub.com/gallery/getting_started
 
-@title: Tag!
-@author: Majd
-@tags: [two-player]
+@title: 
+@author: 
+@tags: []
 @addedOn: 2024-00-00
 */
 
@@ -13,7 +13,7 @@ const wall = "w"
 const runner = "r"
 
 setLegend(
-  [ tagger, bitmap`
+  [tagger, bitmap`
 3333333333333333
 3333333333333333
 3333333333333333
@@ -29,7 +29,7 @@ setLegend(
 3333333333333333
 3333333333333333
 3333333333333333
-3333333333333333` ],
+3333333333333333`],
   [runner, bitmap`
 7777777777777777
 7777777777777777
@@ -71,74 +71,94 @@ setSolids([tagger, runner, wall])
 let level = 0
 const levels = [
   map`
-....................
-....................
-....................
-....................
-....................
-....................
-....................
-....................
-.....w..wwwww.......
-.....ww.w...ww......
-......w.w....w......
-......www...ww......
-...........ww.......
-..........ww........
-........ww..........
-....t..w...r........
-.....www............`
+wwwwwwwwwwwwwwwwwwwwww
+w....................w
+w.w.w..ww.ww.w.w.w.w.w
+w............w.......w
+w...w........w....w..w
+ww.ww.www............w
+w.......www.....w....w
+w..ww...w.www...w....w
+w.wwww..w.....w.ww.www
+w..w.......w....w....w
+w.....w.wwww..w.w.w..w
+ww.w..w...ww....w....w
+w..w..w..w.ww.wwww..ww
+w.www.ww....w........w
+w..ww..ww....w.......w
+w.w.ww....w...w....w.w
+w.t.w..wwww......r...w
+w.w....w....w..w.....w
+w...w.....w..........w
+wwwwwwwwwwwwwwwwwwwwww`
 ]
 
 setMap(levels[level])
 
 setPushables({
-  [ tagger ]: []
+  [tagger]: []
 })
 
 let intervalTagger = 0
 let intervalRunner = 0
+let canMove = true 
 
-function checkIfTagged(){
-  if (getFirst(tagger).x + 1 == getFirst(runner).x || getFirst(tagger).x - 1 == getFirst(runner).x){
-    if(getFirst(tagger).y + 1 == getFirst(runner).y || getFirst(tagger).y - 1 == getFirst(runner).y){
-      addText("Tagged!", {x: 10, y: 4, color: color`3`})
-
-    }
-  }
-}
-
-function moveTagger(direction){
+function tagged(){
   clearInterval(intervalTagger)
-  intervalTagger = setInterval(() => {
+  clearInterval(intervalRunner)
+  canMove = false
+  addText("Tagged!", { x: 10, y: 4, color: color`3` })
+  setTimeout(() => {
+  clearText()
+  setMap(levels[level])
+  canMove = true
   
-  if (direction == "w"){
-    getFirst(tagger).y -= 1
-  } else if (direction == "a"){
-      getFirst(tagger).x -= 1
-  } else if (direction == "s"){
-      getFirst(tagger).y += 1
-  } else {
-      getFirst(tagger).x += 1
-  }
-    
-  }, 133)
+  }, 3000)
 }
 
-function moveRunner(direction){
-  clearInterval(intervalRunner)
-  intervalRunner = setInterval(() => {
-  if (direction == "i"){
-    getFirst(runner).y -= 1
-  } else if (direction == "j"){
-      getFirst(runner).x -= 1
-  } else if (direction == "k"){
-      getFirst(runner).y += 1
-  } else {
-      getFirst(runner).x += 1
+
+function checkIfTagged() {
+  if ((getFirst(tagger).x + 1 == getFirst(runner).x || getFirst(tagger).x - 1 == getFirst(runner).x) && getFirst(tagger).y == getFirst(runner).y) {
+    tagged()
+  } else if ((getFirst(tagger).y + 1 == getFirst(runner).y || getFirst(tagger).y - 1 == getFirst(runner).y) && getFirst(tagger).x == getFirst(runner).x) {
+    tagged()
   }
-    
-  }, 150)
+}
+
+function moveTagger(direction) {
+  clearInterval(intervalTagger)
+  if (canMove == true){
+    intervalTagger = setInterval(() => {
+    checkIfTagged()
+    if (direction == "w") {
+      getFirst(tagger).y -= 1
+    } else if (direction == "a") {
+      getFirst(tagger).x -= 1
+    } else if (direction == "s") {
+      getFirst(tagger).y += 1
+    } else {
+      getFirst(tagger).x += 1
+    }
+
+    }, 145)
+  }
+}
+
+function moveRunner(direction) {
+  clearInterval(intervalRunner)
+  if (canMove == true){
+    intervalRunner = setInterval(() => {
+    if (direction == "i") {
+      getFirst(runner).y -= 1
+    } else if (direction == "j") {
+      getFirst(runner).x -= 1
+    } else if (direction == "k") {
+      getFirst(runner).y += 1
+    } else {
+      getFirst(runner).x += 1
+    }
+    }, 150)
+  }
 }
 
 onInput("w", () => {
@@ -178,4 +198,5 @@ onInput("l", () => {
 
 
 afterInput(() => {
+
 })
