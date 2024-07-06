@@ -65,8 +65,32 @@ LLLLLLLLLLLLLLLL`]
 
 setSolids([tagger, runner, wall])
 
-let level = 0
+let level = 1
 const levels = [
+  map`
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww`,
   map`
 wwwwwwwwwwwwwwwwwwwwww
 w....wwww....wwwwwwwww
@@ -111,6 +135,16 @@ let runnerScore = 0
 
 let runnerTimer = 30
 
+function endGame(playerWhoWon){
+  clearText()
+  setMap(levels[0])
+  if (playerWhoWon == "tagger"){
+    addText("Tagger Wins!", {x: 5, y: 7, color: color`3`})
+  } else {
+    addText("Runner Wins!", {x: 5, y: 7, color: color`3`})
+  }
+}
+
 function startTimer(){
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
@@ -140,16 +174,23 @@ function roundEnd(playerWhoWon){
   }
   
   addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
-  setTimeout(() => {
-  clearText()
-  setMap(levels[level])
-  runnerTimer = 30
-  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
-  addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
-  start = false
-  canMove = true
-
-  }, 3000)
+  if (taggerScore >= 5){
+    endGame("tagger")
+  } else if (runnerScore >= 5){
+    endGame("runner")
+  } else {
+    setTimeout(() => {
+    clearText()
+    setMap(levels[level])
+    runnerTimer = 30
+    addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
+    addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
+    start = false
+    canMove = true
+  
+    }, 3000)
+  }
+  
 }
 
 
