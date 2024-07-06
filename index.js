@@ -1,10 +1,7 @@
 /*
-First time? Check out the tutorial game:
-https://sprig.hackclub.com/gallery/getting_started
-
-@title: 
-@author: 
-@tags: []
+@title: Tag!
+@author: Majd
+@tags: [two-player]
 @addedOn: 2024-00-00
 */
 
@@ -115,15 +112,16 @@ let runnerScore = 0
 let runnerTimer = 30
 
 function startTimer(){
-  intervalRunnerTimer = setInterval(() => {
-  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   runnerTimer -= 1
-  if (runnerTimer <= -1) {
+  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
+  intervalRunnerTimer = setInterval(() => {
+  clearText()
+  runnerTimer -= 1
+  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
+  if (runnerTimer <= 0) {
     roundEnd("runner")
   }
   }, 1000)
-
-  clearText()
 } 
 
 
@@ -161,6 +159,7 @@ function checkIfTagged() {
   }
 }
 
+
 function moveTagger(direction) {
   clearInterval(intervalTagger)
   if (canMove == true){
@@ -196,6 +195,8 @@ function moveRunner(direction) {
     }, 150)
   }
 }
+
+addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
 
 onInput("w", () => {
   if (!start){
