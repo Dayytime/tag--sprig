@@ -72,6 +72,9 @@ let level = 0
 const levels = [
   map`
 wwwwwwwwwwwwwwwwwwwwww
+w....wwww....wwwwwwwww
+w....wwww....wwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
 w....................w
 w.w.w..ww.ww.w.w.w.w.w
 w............w.......w
@@ -104,6 +107,8 @@ let intervalRunner = 0
 let intervalRunnerTimer = 0
 let canMove = true
 let start = false
+
+
 let taggerScore = 0
 let runnerScore = 0
 
@@ -111,58 +116,48 @@ let runnerTimer = 30
 
 function startTimer(){
   intervalRunnerTimer = setInterval(() => {
-  addText(String(runnerTimer), {x: 7, y: 7, color: color`9`})
+  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   runnerTimer -= 1
-  if (runnerTimer <= 0) {
-    runnerWin()
+  if (runnerTimer <= -1) {
+    roundEnd("runner")
   }
   }, 1000)
 
   clearText()
 } 
 
-function runnerWin(){
+
+function roundEnd(playerWhoWon){
   clearInterval(intervalTagger)
   clearInterval(intervalRunner)
   clearInterval(intervalRunnerTimer)
   canMove = false
-  runnerScore += 1
-  addText("Runner Wins!", { x: 7, y: 7, color: color`3` })
-  addText(String(taggerScore) + " - " + String(runnerScore), { x: 7, y: 5, color: color`3` })
+  if (playerWhoWon == "tagger"){
+    taggerScore += 1
+    addText("Tagged!", { x: 7, y: 7, color: color`3` })
+  } else {
+    runnerScore += 1
+    addText("Runner Wins!", { x: 7, y: 7, color: color`3` }) 
+  }
+  
+  addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
   setTimeout(() => {
   clearText()
   setMap(levels[level])
   runnerTimer = 30
   start = false
   canMove = true
-  
+
   }, 3000)
 }
 
-function tagged(){
-  clearInterval(intervalTagger)
-  clearInterval(intervalRunner)
-  clearInterval(intervalRunnerTimer)
-  canMove = false
-  taggerScore += 1
-  addText("Tagged!", { x: 7, y: 7, color: color`3` })
-  addText(String(taggerScore) + " - " + String(runnerScore), { x: 7, y: 5, color: color`3` })
-  setTimeout(() => {
-  clearText()
-  setMap(levels[level])
-  runnerTimer = 30
-  start = false
-  canMove = true
-  
-  }, 3000)
-}
 
 
 function checkIfTagged() {
   if ((getFirst(tagger).x + 1 == getFirst(runner).x || getFirst(tagger).x - 1 == getFirst(runner).x) && getFirst(tagger).y == getFirst(runner).y) {
-    tagged()
+    roundEnd("tagger")
   } else if ((getFirst(tagger).y + 1 == getFirst(runner).y || getFirst(tagger).y - 1 == getFirst(runner).y) && getFirst(tagger).x == getFirst(runner).x) {
-    tagged()
+    roundEnd("tagger")
   }
 }
 
