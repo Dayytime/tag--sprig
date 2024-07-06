@@ -116,6 +116,7 @@ function startTimer(){
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   intervalRunnerTimer = setInterval(() => {
   clearText()
+  addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   if (runnerTimer <= 0) {
@@ -143,6 +144,8 @@ function roundEnd(playerWhoWon){
   clearText()
   setMap(levels[level])
   runnerTimer = 30
+  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
+  addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
   start = false
   canMove = true
 
@@ -197,6 +200,7 @@ function moveRunner(direction) {
 }
 
 addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
+addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
 
 onInput("w", () => {
   if (!start){
