@@ -101,16 +101,57 @@ setPushables({
 
 let intervalTagger = 0
 let intervalRunner = 0
-let canMove = true 
+let intervalRunnerTimer = 0
+let canMove = true
+let start = false
+let taggerScore = 0
+let runnerScore = 0
+
+let runnerTimer = 30
+
+function startTimer(){
+  intervalRunnerTimer = setInterval(() => {
+  addText(String(runnerTimer), {x: 7, y: 7, color: color`9`})
+  runnerTimer -= 1
+  if (runnerTimer <= 0) {
+    runnerWin()
+  }
+  }, 1000)
+
+  clearText()
+} 
+
+function runnerWin(){
+  clearInterval(intervalTagger)
+  clearInterval(intervalRunner)
+  clearInterval(intervalRunnerTimer)
+  canMove = false
+  runnerScore += 1
+  addText("Runner Wins!", { x: 7, y: 7, color: color`3` })
+  addText(String(taggerScore) + " - " + String(runnerScore), { x: 7, y: 5, color: color`3` })
+  setTimeout(() => {
+  clearText()
+  setMap(levels[level])
+  runnerTimer = 30
+  start = false
+  canMove = true
+  
+  }, 3000)
+}
 
 function tagged(){
   clearInterval(intervalTagger)
   clearInterval(intervalRunner)
+  clearInterval(intervalRunnerTimer)
   canMove = false
-  addText("Tagged!", { x: 10, y: 4, color: color`3` })
+  taggerScore += 1
+  addText("Tagged!", { x: 7, y: 7, color: color`3` })
+  addText(String(taggerScore) + " - " + String(runnerScore), { x: 7, y: 5, color: color`3` })
   setTimeout(() => {
   clearText()
   setMap(levels[level])
+  runnerTimer = 30
+  start = false
   canMove = true
   
   }, 3000)
@@ -162,39 +203,73 @@ function moveRunner(direction) {
 }
 
 onInput("w", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveTagger("w")
 })
 
 onInput("a", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveTagger("a")
 })
 
 
 onInput("s", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveTagger("s")
 })
 
 onInput("d", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveTagger("d")
 })
 
 
 onInput("i", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveRunner("i")
 })
 
 onInput("j", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveRunner("j")
 })
 
 
 onInput("k", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveRunner("k")
 })
 
 onInput("l", () => {
+  if (!start){
+    start = true
+    startTimer()
+  }
   moveRunner("l")
 })
+
+
 
 
 afterInput(() => {
