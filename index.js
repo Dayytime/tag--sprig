@@ -9,6 +9,51 @@ const tagger = "t"
 const wall = "w"
 const runner = "r"
 
+const tagSFX = tune`
+124.48132780082987: C4^124.48132780082987 + D4^124.48132780082987 + E4^124.48132780082987 + F4^124.48132780082987 + G4^124.48132780082987,
+124.48132780082987: C4^124.48132780082987 + D4^124.48132780082987 + E4^124.48132780082987 + F4^124.48132780082987 + G4^124.48132780082987,
+3734.4398340248963`
+const runnerWinSFX = tune`
+143.54066985645932: C5^143.54066985645932 + C4-143.54066985645932,
+143.54066985645932: A5^143.54066985645932 + A4-143.54066985645932,
+143.54066985645932: G5^143.54066985645932 + G4-143.54066985645932,
+143.54066985645932: B4^143.54066985645932 + C4-143.54066985645932,
+143.54066985645932: C5^143.54066985645932 + C4-143.54066985645932,
+3875.5980861244016`
+const endGameSFX = tune`
+300: B4/300 + G4/300 + D4/300 + E5/300,
+300: B4/300 + G4/300 + D4/300 + E5/300,
+300: B4/300 + G4/300 + D4/300 + E5/300,
+300: B4/300 + G4/300 + D4/300 + E5/300,
+300: D5/300 + A4/300 + F4/300 + D4/300,
+300: D5/300 + A4/300 + F4/300 + D4/300,
+300: D5/300 + A4/300 + F4/300 + D4/300,
+300: D5/300 + A4/300 + F4/300 + D4/300,
+300: A4/300 + E4/300 + C4/300,
+300: A4/300 + E4/300 + C4/300,
+300: A4/300 + E4/300 + C4/300,
+300: A4/300 + E4/300 + C4/300,
+300: C4/300 + E4/300 + A4/300,
+300: C4/300 + E4/300 + G4/300 + C5/300,
+300: C4/300 + E4/300 + G4/300 + C5/300,
+300: C5/300 + G4/300 + E4/300 + C4/300,
+300: E5~300 + B4~300 + G4~300 + D4~300,
+300: E5^300 + B4^300 + G4^300 + D4^300,
+300: E5~300 + B4~300 + G4~300 + D4~300,
+300: E5^300 + B4^300 + G4^300 + D4^300,
+300: E5~300 + B4~300 + G4~300 + D4~300,
+300: D5^300 + A4^300 + F4^300 + D4^300,
+300: D5~300 + A4~300 + F4~300 + D4~300,
+300: D5^300 + A4^300 + F4^300 + D4^300,
+300: D5~300 + A4~300 + F4~300 + D4~300,
+300: A4^300 + E4^300 + C4^300,
+300: A4~300 + E4~300 + C4~300,
+300: A4^300 + E4^300 + C4^300,
+300: A4~300 + E4~300 + C4~300,
+300: C5^300 + C4^300 + E4^300 + G4^300,
+300: C5~300 + C4~300 + E4~300 + G4~300,
+300: C5^300 + C4^300 + E4^300 + G4^300`
+
 setLegend(
   [tagger, bitmap`
 3333333333333333
@@ -147,6 +192,7 @@ let playerTwoSpeed = 0
 function endGame(playerWhoWon){
   clearText()
   setMap(levels[0])
+  playTune(endGameSFX, Infinity)
   if (playerWhoWon == 1){
     addText("Player One Wins!", {x: 2, y: 7, color: color`3`})
   } else {
@@ -163,6 +209,7 @@ function startTimer(){
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   if (runnerTimer <= 0) {
+    playTune(runnerWinSFX)
     if (isRunner){roundEnd(1)} else {roundEnd(2)}
   }
   }, 1000)
@@ -208,8 +255,10 @@ function roundEnd(playerWhoWon){
 
 function checkIfTagged(player) {
   if ((getFirst(tagger).x + 1 == getFirst(runner).x || getFirst(tagger).x - 1 == getFirst(runner).x) && getFirst(tagger).y == getFirst(runner).y) {
+    playTune(tagSFX)
     if (player == 1){roundEnd(1)} else {roundEnd(2)}
   } else if ((getFirst(tagger).y + 1 == getFirst(runner).y || getFirst(tagger).y - 1 == getFirst(runner).y) && getFirst(tagger).x == getFirst(runner).x) {
+    playTune(tagSFX)
     if (player == 1){roundEnd(1)} else {roundEnd(2)}
   }
 }
