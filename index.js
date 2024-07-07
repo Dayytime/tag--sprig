@@ -123,8 +123,8 @@ setPushables({
   [tagger]: []
 })
 
-let intervalTagger = 0
-let intervalRunner = 0
+let intervalPlayerOne = 0
+let intervalPlayerTwo = 0
 let intervalRunnerTimer = 0
 let canMove = true
 let start = false
@@ -132,18 +132,25 @@ let start = false
 let isRunner = false
 let isTagger = false
 
-let taggerScore = 0
-let runnerScore = 0
+let playerOneScore = 0
+let playerTwoScore = 0
 
 let runnerTimer = 30
+
+let getPlayerOneSprite = 0
+let getPlayerTwoSprite = 0
+
+let playerOneSpeed = 0
+let playerTwoSpeed = 0
+
 
 function endGame(playerWhoWon){
   clearText()
   setMap(levels[0])
-  if (playerWhoWon == "tagger"){
-    addText("Tagger Wins!", {x: 5, y: 7, color: color`3`})
+  if (playerWhoWon == 1){
+    addText("Player One Wins!", {x: 2, y: 7, color: color`3`})
   } else {
-    addText("Runner Wins!", {x: 5, y: 7, color: color`3`})
+    addText("Player Two Wins!", {x: 2, y: 7, color: color`3`})
   }
 }
 
@@ -152,41 +159,43 @@ function startTimer(){
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   intervalRunnerTimer = setInterval(() => {
   clearText()
-  addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
+  addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   if (runnerTimer <= 0) {
-    roundEnd("runner")
+    if (isRunner){roundEnd(1)} else {roundEnd(2)}
   }
   }, 1000)
 } 
 
 
 function roundEnd(playerWhoWon){
-  clearInterval(intervalTagger)
-  clearInterval(intervalRunner)
+  clearInterval(intervalPlayerOne)
+  clearInterval(intervalPlayerTwo)
   clearInterval(intervalRunnerTimer)
   canMove = false
-  if (playerWhoWon == "tagger"){
-    taggerScore += 1
-    addText("Tagged!", { x: 7, y: 7, color: color`3` })
+  if (playerWhoWon == 1){
+    playerOneScore += 1
+    addText("Player One Wins!", { x: 2, y: 7, color: color`3` })
   } else {
-    runnerScore += 1
-    addText("Runner Wins!", { x: 7, y: 7, color: color`3` }) 
+    playerTwoScore += 1
+    addText("Player Two Wins!", { x: 2, y: 7, color: color`3` }) 
   }
   
-  addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
-  if (taggerScore >= 5){
-    endGame("tagger")
-  } else if (runnerScore >= 5){
-    endGame("runner")
+  addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
+  if (playerOneScore >= 5){
+    endGame(1)
+  } else if (playerTwoScore >= 5){
+    endGame(2)
   } else {
     setTimeout(() => {
     clearText()
     setMap(levels[level])
     runnerTimer = 30
     addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
-    addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
+    addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
+    isRunner = !isRunner
+    isTagger = !isTagger
     start = false
     canMove = true
   
@@ -197,60 +206,78 @@ function roundEnd(playerWhoWon){
 
 
 
-function checkIfTagged() {
+function checkIfTagged(player) {
   if ((getFirst(tagger).x + 1 == getFirst(runner).x || getFirst(tagger).x - 1 == getFirst(runner).x) && getFirst(tagger).y == getFirst(runner).y) {
-    roundEnd("tagger")
+    if (player == 1){roundEnd(1)} else {roundEnd(2)}
   } else if ((getFirst(tagger).y + 1 == getFirst(runner).y || getFirst(tagger).y - 1 == getFirst(runner).y) && getFirst(tagger).x == getFirst(runner).x) {
-    roundEnd("tagger")
+    if (player == 1){roundEnd(1)} else {roundEnd(2)}
   }
 }
 
 
-function moveTagger(direction) {
-  clearInterval(intervalTagger)
+function movePlayerOne(direction, role) {
+  if (role == "tagger"){
+    getPlayerOneSprite = getFirst(tagger)
+    playerOneSpeed = 145
+  } else {
+    getPlayerOneSprite = getFirst(runner)
+    playerOneSpeed = 150
+  }
+  clearInterval(intervalPlayerOne)
   if (canMove == true){
-    intervalTagger = setInterval(() => {
-    checkIfTagged()
+    intervalPlayerOne = setInterval(() => {
+    if (role == "tagger"){checkIfTagged(1)}
     if (direction == "w") {
-      getFirst(tagger).y -= 1
+      getPlayerOneSprite.y -= 1
     } else if (direction == "a") {
-      getFirst(tagger).x -= 1
+      getPlayerOneSprite.x -= 1
     } else if (direction == "s") {
-      getFirst(tagger).y += 1
+      getPlayerOneSprite.y += 1
     } else {
-      getFirst(tagger).x += 1
+      getPlayerOneSprite.x += 1
     }
 
-    }, 145)
+    }, playerOneSpeed)
   }
 }
 
-function movePlayerTwo(direction) {
-  clearInterval(intervalRunner)
+function movePlayerTwo(direction, role) {
+  if (role == "tagger"){
+    getPlayerTwoSprite = getFirst(tagger)
+    playerTwoSpeed = 145
+  } else {
+    getPlayerTwoSprite = getFirst(runner)
+    playerTwoSpeed = 150
+  }
+  clearInterval(intervalPlayerTwo)
   if (canMove == true){
-    intervalRunner = setInterval(() => {
+    intervalPlayerTwo = setInterval(() => {
+    if (role == "tagger"){checkIfTagged(2)}
     if (direction == "i") {
-      getFirst(runner).y -= 1
+      getPlayerTwoSprite.y -= 1
     } else if (direction == "j") {
-      getFirst(runner).x -= 1
+      getPlayerTwoSprite.x -= 1
     } else if (direction == "k") {
-      getFirst(runner).y += 1
+      getPlayerTwoSprite.y += 1
     } else {
-      getFirst(runner).x += 1
+      getPlayerTwoSprite.x += 1
     }
-    }, 150)
+    }, playerTwoSpeed)
   }
 }
 
 addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
-addText(String(taggerScore) + "-" + String(runnerScore), { x: 3, y: 1, color: color`3` })
+addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
 
 onInput("w", () => {
   if (!start){
     start = true
     startTimer()
   }
-  movePlayerOne("w")
+  if (!isRunner){
+    movePlayerOne("w", "tagger")
+  } else {movePlayerOne("w", "runner")}
+  
 })
 
 onInput("a", () => {
@@ -258,7 +285,9 @@ onInput("a", () => {
     start = true
     startTimer()
   }
-  movePlayerOne("a")
+  if (!isRunner){
+    movePlayerOne("a", "tagger")
+  } else {movePlayerOne("a", "runner")}
 })
 
 
@@ -267,7 +296,9 @@ onInput("s", () => {
     start = true
     startTimer()
   }
-  movePlayerOne("s")
+  if (!isRunner){
+    movePlayerOne("s", "tagger")
+  } else {movePlayerOne("s", "runner")}
 })
 
 onInput("d", () => {
@@ -275,7 +306,9 @@ onInput("d", () => {
     start = true
     startTimer()
   }
-  movePlayerOne("d")
+  if (!isRunner){
+    movePlayerOne("d", "tagger")
+  } else {movePlayerOne("d", "runner")}
 })
 
 
@@ -284,7 +317,9 @@ onInput("i", () => {
     start = true
     startTimer()
   }
-  movePlayerTwo("i")
+  if (!isTagger){
+    movePlayerTwo("i", "runner")
+  } else {movePlayerTwo("i", "tagger")}
 })
 
 onInput("j", () => {
@@ -292,7 +327,10 @@ onInput("j", () => {
     start = true
     startTimer()
   }
-  movePlayerTwo("j")
+  if (!isTagger){
+    movePlayerTwo("j", "runner")
+  } else {movePlayerTwo("j", "tagger")}
+  
 })
 
 
@@ -301,7 +339,9 @@ onInput("k", () => {
     start = true
     startTimer()
   }
-  movePlayerTwo("k")
+  if (!isTagger){
+    movePlayerTwo("k", "runner")
+  } else {movePlayerTwo("k", "tagger")}
 })
 
 onInput("l", () => {
@@ -309,7 +349,9 @@ onInput("l", () => {
     start = true
     startTimer()
   }
-  movePlayerTwo("l")
+  if (!isTagger){
+    movePlayerTwo("l", "runner")
+  } else {movePlayerTwo("l", "tagger")}
 })
 
 
