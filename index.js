@@ -129,6 +129,8 @@ let intervalRunnerTimer = 0
 let canMove = true
 let start = false
 
+let isRunner = false
+let isTagger = false
 
 let taggerScore = 0
 let runnerScore = 0
@@ -223,7 +225,7 @@ function moveTagger(direction) {
   }
 }
 
-function moveRunner(direction) {
+function movePlayerTwo(direction) {
   clearInterval(intervalRunner)
   if (canMove == true){
     intervalRunner = setInterval(() => {
@@ -248,7 +250,7 @@ onInput("w", () => {
     start = true
     startTimer()
   }
-  moveTagger("w")
+  movePlayerOne("w")
 })
 
 onInput("a", () => {
@@ -256,7 +258,7 @@ onInput("a", () => {
     start = true
     startTimer()
   }
-  moveTagger("a")
+  movePlayerOne("a")
 })
 
 
@@ -265,7 +267,7 @@ onInput("s", () => {
     start = true
     startTimer()
   }
-  moveTagger("s")
+  movePlayerOne("s")
 })
 
 onInput("d", () => {
@@ -273,7 +275,7 @@ onInput("d", () => {
     start = true
     startTimer()
   }
-  moveTagger("d")
+  movePlayerOne("d")
 })
 
 
@@ -282,7 +284,7 @@ onInput("i", () => {
     start = true
     startTimer()
   }
-  moveRunner("i")
+  movePlayerTwo("i")
 })
 
 onInput("j", () => {
@@ -290,7 +292,7 @@ onInput("j", () => {
     start = true
     startTimer()
   }
-  moveRunner("j")
+  movePlayerTwo("j")
 })
 
 
@@ -299,7 +301,7 @@ onInput("k", () => {
     start = true
     startTimer()
   }
-  moveRunner("k")
+  movePlayerTwo("k")
 })
 
 onInput("l", () => {
@@ -307,7 +309,7 @@ onInput("l", () => {
     start = true
     startTimer()
   }
-  moveRunner("l")
+  movePlayerTwo("l")
 })
 
 
