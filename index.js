@@ -176,7 +176,7 @@ LLLLLLLLLLLLLLLL`]
 
 setSolids([tagger, runner, wall])
 
-let level = 2
+let level = 1
 const levels = [
   map`
 wwwwwwwwwwwwwwwwwwwwww
@@ -249,6 +249,78 @@ w..w.w....w..w.w...w.w
 w.t..w.www...w.......w
 w......w.w.wwww.wwww.w
 wwwwwwww.............w
+wwwwwwwwwwwwwwwwwwwwww`,
+  map`
+wwwwwwwwwwwwwwwwwwwwww
+w....wwww....wwwwwwwww
+w....wwww....wwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wt.w...w......w......w
+w....w.....w....w..w.w
+ww.w.w.w......w..w.w.w
+w.......www.ww.....w.w
+w.www.w.w....w.w.w...w
+w...w...ww.w.w..w..w.w
+www.w.www...ww.w..w.ww
+w.........ww.w...w.w.w
+w.ww.ww.w....w.......w
+w..w....ww..wwwwww.www
+ww...w.ww....wwwww...w
+w...ww..w.ww......w.ww
+w.w.....w....ww.w....w
+w.wwwww.w..w.w..www..w
+w.w.....ww..ww.......w
+w...w..w......w.w.w.ww
+ww..w....w.ww...w....w
+w...w..w..........w.rw
+wwwwwwwwwwwwwwwwwwwwww`,
+  map`
+wwwwwwwwwwwwwwwwwwwwww
+w....wwww....wwwwwwwww
+w....wwww....wwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+w.........ww.wwwwwwwww
+w.wwwwwww....w...w...w
+w.........ww.w.w.w.w.w
+w.www..w.www...w...w.w
+w.www.....ww.w.w.w.w.w
+w.....w.w.ww.w...w.w.w
+w.www.w.w....wwwwwww.w
+w.ww..w.w.ww.ww......w
+w.........ww...r.ww.ww
+w.ww.ww.wwwww.ww.ww.ww
+w.ww.w........ww.....w
+wt...ww.w.www....ww.ww
+ww..www...ww...w.ww.ww
+www..www.wwww.ww.w..ww
+wwww..w...www.ww.w.www
+wwwww...w.ww.......www
+wwwwwww......wwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww`,
+  map`
+wwwwwwwwwwwwwwwwwwwwww
+w....wwww....wwwwwwwww
+w....wwww....wwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwww
+wt........w..........w
+ww.wwww.wwww.wwww.wwww
+w....w.....w.........w
+w.ww.www.wwwwww.w.wwww
+w.....w.........w....w
+www.w.www.www.w.www.ww
+w....................w
+ww.www.w.ww.www.ww.www
+w.............w......w
+ww.w.w.w.w.w.wwww.wwww
+w....................w
+www.www.wwww.ww.wwww.w
+w....................w
+www.w.wwww.wwwww.w.w.w
+w....................w
+w.ww.www.wwww.w.wwww.w
+w...........w.......rw
 wwwwwwwwwwwwwwwwwwwwww`
 ]
 
@@ -334,6 +406,8 @@ function roundEnd(playerWhoWon){
   } else {
     setTimeout(() => {
     clearText()
+    level += 1
+    if(level >= levels.length){level = 1}
     setMap(levels[level])
     roundTunePlayback = playTune(roundTune, Infinity)
     runnerTimer = 30
