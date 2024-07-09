@@ -8,6 +8,8 @@
 const tagger = "t"
 const wall = "w"
 const runner = "r"
+const clock = "c"
+const background = "b"
 
 const tagSFX = tune`
 124.48132780082987: C4^124.48132780082987 + D4^124.48132780082987 + E4^124.48132780082987 + F4^124.48132780082987 + G4^124.48132780082987,
@@ -171,7 +173,41 @@ LLLLLLLLLLLLLLLL
 LLLLLLLLLLLLLLLL
 LLLLLLLLLLLLLLLL
 LLLLLLLLLLLLLLLL
-LLLLLLLLLLLLLLLL`]
+LLLLLLLLLLLLLLLL`],
+  [clock, bitmap`
+................
+....33333333....
+..333333333333..
+.33322200222333.
+.33222222222233.
+3322222222222233
+3322222022222233
+3322222022222233
+3302222000022033
+3322222222222233
+3322222222222233
+3322222222222233
+.33222222222233.
+.33322200222333.
+..333333333333..
+....33333333....`],
+  [background, bitmap`
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222
+2222222222222222`]
 )
 
 setSolids([tagger, runner, wall])
@@ -207,24 +243,24 @@ wwwwwwwwwwwwwwwwwwwwww
 w....wwww....wwwwwwwww
 w....wwww....wwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
-w....................w
-w.w.w..ww.ww.w.w.w.w.w
-w............w.......w
-w...w........w....w..w
-ww.ww.www............w
-w.......www.....w....w
-w..ww...w.www...w....w
-w.wwww..w.....w.ww.www
-w..w.......w....w....w
-w.....w.wwww..w.w.w..w
-ww.w..w...ww....w....w
-w..w..w..w.ww.wwww..ww
-w.www.ww....w........w
-w..ww..ww....w.......w
-w.w.ww....w...w....w.w
-w.t.w..wwww......r...w
-w.w....w....w..w.....w
-w...w.....w..........w
+wbbbbbbbbbbbbbbbbbbbbw
+wbwbwbbwwbwwbwbwbwbwbw
+wbbbbbbbbbbbbwbbbbbbbw
+wbbbwbbbbbbbbwbbbbwbbw
+wwbwwbwwwbbbbbbbbbbbbw
+wbbbbbbbwwwbbbbbwbbbbw
+wbbwwbbbwbwwwbbbwbbbbw
+wbwwwwbbwbbbbbwbwwbwww
+wbbwbbbbbbbwbbbbwbbbbw
+wbbbbbwbwwwwbbwbwbwbbw
+wwbwbbwbbbwwbbbbwbbbbw
+wbbwbbwbbwbwwbwwwwbbww
+wbwwwbwwbbbbwbbbbbbbbw
+wbbwwbbwwbbbbwbbbbbbbw
+wbwbwwbbbbwbbbwbbbbwbw
+wbtbwbbwwwwbbbbbbrbbbw
+wbwbbbbwbbbbwbbwbbbbbw
+wbbbwbbbbbwbbbbbbbbbbw
 wwwwwwwwwwwwwwwwwwwwww`,
   map`
 wwwwwwwwwwwwwwwwwwwwww
@@ -365,6 +401,7 @@ function endGame(playerWhoWon){
 }
 
 function startTimer(){
+  let played = false
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   intervalRunnerTimer = setInterval(() => {
@@ -372,7 +409,8 @@ function startTimer(){
   addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
-  if (runnerTimer == 5){
+  if (runnerTimer <= 5 && !played){
+    played = true
     roundTunePlayback.end()
     roundFastTunePlayback = playTune(roundFastTune, Infinity)
   }
@@ -437,6 +475,15 @@ function checkIfTagged(player) {
   }
 }
 
+function checkPowerUp(){
+  if (tilesWith(tagger, clock).length == 1){
+    runnerTimer += 5
+    getFirst(clock).remove()
+  } else if (tilesWith(runner, clock).length == 1){
+    runnerTimer -= 5
+    getFirst(clock).remove()
+  }
+}
 
 function movePlayerOne(direction, role) {
   if (role == "tagger"){
@@ -450,6 +497,7 @@ function movePlayerOne(direction, role) {
   if (canMove == true){
     intervalPlayerOne = setInterval(() => {
     if (role == "tagger"){checkIfTagged(1)}
+    checkPowerUp()
     if (direction == "w") {
       getPlayerOneSprite.y -= 1
     } else if (direction == "a") {
@@ -459,7 +507,7 @@ function movePlayerOne(direction, role) {
     } else {
       getPlayerOneSprite.x += 1
     }
-
+    
     }, playerOneSpeed)
   }
 }
@@ -476,6 +524,7 @@ function movePlayerTwo(direction, role) {
   if (canMove == true){
     intervalPlayerTwo = setInterval(() => {
     if (role == "tagger"){checkIfTagged(2)}
+    checkPowerUp()
     if (direction == "i") {
       getPlayerTwoSprite.y -= 1
     } else if (direction == "j") {
@@ -488,6 +537,13 @@ function movePlayerTwo(direction, role) {
     }, playerTwoSpeed)
   }
 }
+
+
+let blankSpots = getAll(background)
+console.log(blankSpots)
+let index = Math.floor(Math.random() * (blankSpots.length))
+addSprite(blankSpots[index].x, blankSpots[index].y, clock)
+
 
 addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
 addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
