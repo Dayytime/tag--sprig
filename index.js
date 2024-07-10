@@ -212,7 +212,7 @@ LLLLLLLLLLLLLLLL`],
 
 setSolids([tagger, runner, wall])
 
-let level = 1
+
 const levels = [
   map`
 wwwwwwwwwwwwwwwwwwwwww
@@ -267,71 +267,71 @@ wwwwwwwwwwwwwwwwwwwwww
 w....wwww....wwwwwwwww
 w....wwww....wwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
-wwww...w.............w
-w....w.wwww.w.w.wwww.w
-w..ww..............w.w
-w..w...w.w..w.w..w...w
-w..w....w....w...w.w.w
-w.www..........w...w.w
-w.....w..w.ww.w.w.r..w
-w.ww.....w.w........ww
-w..w..wwww.w..w.w.w..w
-w..w.....w.ww......www
-w...w.w..w.w..w....w.w
-w......w.....w..ww.w.w
-w.wwww....w.ww..w....w
-w....w.w..w..w....ww.w
-w..w.w....w..w.w...w.w
-w.t..w.www...w.......w
-w......w.w.wwww.wwww.w
-wwwwwwww.............w
+wwwwbbbwbbbbbbbbbbbbbw
+wbbbbwbwwwwbwbwbwwwwbw
+wbbwwbbbbbbbbbbbbbbwbw
+wbbwbbbwbwbbwbwbbwbbbw
+wbbwbbbbwbbbbwbbbwbwbw
+wbwwwbbbbbbbbbbwbbbwbw
+wbbbbbwbbwbwwbwbwbrbbw
+wbwwbbbbbwbwbbbbbbbbww
+wbbwbbwwwwbwbbwbwbwbbw
+wbbwbbbbbwbwwbbbbbbwww
+wbbbwbwbbwbwbbwbbbbwbw
+wbbbbbbwbbbbbwbbwwbwbw
+wbwwwwbbbbwbwwbbwbbbbw
+wbbbbwbwbbwbbwbbbbwwbw
+wbbwbwbbbbwbbwbwbbbwbw
+wbtbbwbwwwbbbwbbbbbbbw
+wbbbbbbwbwbwwwwbwwwwbw
+wwwwwwwwbbbbbbbbbbbbbw
 wwwwwwwwwwwwwwwwwwwwww`,
   map`
 wwwwwwwwwwwwwwwwwwwwww
 w....wwww....wwwwwwwww
 w....wwww....wwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
-wt.w...w......w......w
-w....w.....w....w..w.w
-ww.w.w.w......w..w.w.w
-w.......www.ww.....w.w
-w.www.w.w....w.w.w...w
-w...w...ww.w.w..w..w.w
-www.w.www...ww.w..w.ww
-w.........ww.w...w.w.w
-w.ww.ww.w....w.......w
-w..w....ww..wwwwww.www
-ww...w.ww....wwwww...w
-w...ww..w.ww......w.ww
-w.w.....w....ww.w....w
-w.wwwww.w..w.w..www..w
-w.w.....ww..ww.......w
-w...w..w......w.w.w.ww
-ww..w....w.ww...w....w
-w...w..w..........w.rw
+wtbwbbbwbbbbbbwbbbbbbw
+wbbbbwbbbbbwbbbbwbbwbw
+wwbwbwbwbbbbbbwbbwbwbw
+wbbbbbbbwwwbwwbbbbbwbw
+wbwwwbwbwbbbbwbwbwbbbw
+wbbbwbbbwwbwbwbbwbbwbw
+wwwbwbwwwbbbwwbwbbw.ww
+wbbbbbbbbbwwbwbbbwbwbw
+wbwwbwwbwbbbbwbbbbbbbw
+wbbwbbbbwwbbwwwwwwbwww
+wwbbbwbwwbbbbwwwwwbbbw
+wbbbwwbbwbwwbbbbbbwbww
+wbwbbbbbwbbbbwwbwbbbbw
+wbwwwwwbwbbwbwbbwwwbbw
+wbwbbbbbwwbbwwbbbbbbbw
+wbbbwbbwbbbbbbwbwbwbww
+wwbbwbbbbwbwwbbbwbbbbw
+wbbbwbbwbbbbbbbbbbwbrw
 wwwwwwwwwwwwwwwwwwwwww`,
   map`
 wwwwwwwwwwwwwwwwwwwwww
 w....wwww....wwwwwwwww
 w....wwww....wwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
-w.........ww.wwwwwwwww
-w.wwwwwww....w...w...w
-w.........ww.w.w.w.w.w
-w.www..w.www...w...w.w
-w.www.....ww.w.w.w.w.w
-w.....w.w.ww.w...w.w.w
-w.www.w.w....wwwwwww.w
-w.ww..w.w.ww.ww......w
-w.........ww...r.ww.ww
-w.ww.ww.wwwww.ww.ww.ww
-w.ww.w........ww.....w
-wt...ww.w.www....ww.ww
-ww..www...ww...w.ww.ww
-www..www.wwww.ww.w..ww
-wwww..w...www.ww.w.www
-wwwww...w.ww.......www
-wwwwwww......wwwwwwwww
+wbbbbbbbbbwwbwwwwwwwww
+wbwwwwwwwbbbbwbbbwbbbw
+wbbbbbbbbbwwbwbwbwbwbw
+wbwwwbbwbwwwbbbwbbbwbw
+wbwwwbbbbbwwbwbwbwbwbw
+wbbbbbwbwbwwbwbbbwbwbw
+wbwwwbwbwbbbbwwwwwwwbw
+wbwwbbwbwbwwbwwbbbbbbw
+wbbbbbbbbbwwbbbrbwwbww
+wbwwbwwbwwwwwbwwbwwbww
+wbwwbwbbbbbbbbwwbbbbbw
+wtbbbwwbwbwwwbbbbwwbww
+wwbbwwwbbbwwbbbwbwwbww
+wwwbbwwwbwwwwbwwbwbbww
+wwwwbbwbbbwwwbwwbwbwww
+wwwwwbbbwbwwbbbbbbbwww
+wwwwwwwbbbbbbwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww`,
   map`
@@ -340,25 +340,27 @@ w....wwww....wwwwwwwww
 w....wwww....wwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwww
-wt........w..........w
-ww.wwww.wwww.wwww.wwww
-w....w.....w.........w
-w.ww.www.wwwwww.w.wwww
-w.....w.........w....w
-www.w.www.www.w.www.ww
-w....................w
-ww.www.w.ww.www.ww.www
-w.............w......w
-ww.w.w.w.w.w.wwww.wwww
-w....................w
-www.www.wwww.ww.wwww.w
-w....................w
-www.w.wwww.wwwww.w.w.w
-w....................w
-w.ww.www.wwww.w.wwww.w
-w...........w.......rw
+wtbbbbbbbbwbbbbbbbbbbw
+wwbwwwwbwwwwbwwwwbwwww
+wbbbbwbbbbbwbbbbbbbbbw
+wbwwbwwwbwwwwwwbwbwwww
+wbbbbbwbbbbbbbbbwbbbbw
+wwwbwbwwwbwwwbwbwwwbww
+wbbbbbbbbbbbbbbbbbbbbw
+wwbwwwbwbwwbwwwbwwbwww
+wbbbbbbbbbbbbbwbbbbbbw
+wwbwbwbwbwbwbwwwwbwwww
+wbbbbbbbbbbbbbbbbbbbbw
+wwwbwwwbwwwwbwwbwwwwbw
+wbbbbbbbbbbbbbbbbbbbbw
+wwwbwbwwwwbwwwwwbwbwbw
+wbbbbbbbbbbbbbbbbbbbbw
+wbwwbwwwbwwwwbwbwwwwbw
+wbbbbbbbbbbbwbbbbbbbrw
 wwwwwwwwwwwwwwwwwwwwww`
 ]
+
+let level = Math.floor(Math.random() * (levels.length - 1) + 1)
 
 setMap(levels[level])
 
@@ -388,6 +390,9 @@ let playerTwoSpeed = 0
 
 let roundFastTunePlayback = ``
 
+let blankSpots = getAll(background)
+
+
 function endGame(playerWhoWon){
   clearText()
   setMap(levels[0])
@@ -400,8 +405,17 @@ function endGame(playerWhoWon){
   }
 }
 
+function spawnPowerUp(){
+  let index = Math.floor(Math.random() * (blankSpots.length))
+  addSprite(blankSpots[index].x, blankSpots[index].y, clock)
+}
+
 function startTimer(){
   let played = false
+  let randomTimeOne = Math.floor(Math.random() * (25 - 5 + 1) + 5)
+  let randomTimeTwo = Math.floor(Math.random() * (25 - 5 + 1) + 5)
+  console.log(randomTimeOne)
+  console.log(randomTimeTwo)
   runnerTimer -= 1
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
   intervalRunnerTimer = setInterval(() => {
@@ -418,6 +432,14 @@ function startTimer(){
     roundFastTunePlayback.end()
     playTune(runnerWinSFX)
     if (isRunner){roundEnd(1)} else {roundEnd(2)}
+  }
+  if (runnerTimer == randomTimeOne){
+    randomTimeOne = -11
+    spawnPowerUp()
+  }
+  if (runnerTimer == randomTimeTwo){
+    randomTimeTwo = -11
+    spawnPowerUp()
   }
   }, 1000)
 } 
@@ -444,9 +466,9 @@ function roundEnd(playerWhoWon){
   } else {
     setTimeout(() => {
     clearText()
-    level += 1
-    if(level >= levels.length){level = 1}
+    level = Math.floor(Math.random() * (levels.length - 1) + 1)
     setMap(levels[level])
+    blankSpots = getAll(background)
     roundTunePlayback = playTune(roundTune, Infinity)
     runnerTimer = 30
     addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
@@ -476,11 +498,14 @@ function checkIfTagged(player) {
 }
 
 function checkPowerUp(){
-  if (tilesWith(tagger, clock).length == 1){
-    runnerTimer += 5
+  if (tilesWith(tagger, clock).length >= 1){
+    runnerTimer += 6
+    console.log("tagger delete xy" + getFirst(clock).x + " " + getFirst(clock).y)
     getFirst(clock).remove()
-  } else if (tilesWith(runner, clock).length == 1){
-    runnerTimer -= 5
+  } 
+  if (tilesWith(runner, clock).length >= 1){
+    runnerTimer -= 6
+    console.log("runner delete xy" + getFirst(clock).x + " " + getFirst(clock).y)
     getFirst(clock).remove()
   }
 }
@@ -539,10 +564,8 @@ function movePlayerTwo(direction, role) {
 }
 
 
-let blankSpots = getAll(background)
-console.log(blankSpots)
-let index = Math.floor(Math.random() * (blankSpots.length))
-addSprite(blankSpots[index].x, blankSpots[index].y, clock)
+
+
 
 
 addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
