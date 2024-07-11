@@ -9,6 +9,7 @@ const tagger = "t"
 const wall = "w"
 const runner = "r"
 const clock = "c"
+const invert = "i"
 const background = "b"
 
 const tagSFX = tune`
@@ -191,6 +192,23 @@ LLLLLLLLLLLLLLLL`],
 .33322200222333.
 ..333333333333..
 ....33333333....`],
+  [invert, bitmap`
+...........7....
+...........77...
+...........777..
+777777777777777.
+7777777777777777
+777777777777777.
+...........777..
+....3......77...
+...33......7....
+..333...........
+.333333333333333
+3333333333333333
+.333333333333333
+..333...........
+...33...........
+....3...........`],
   [background, bitmap`
 2222222222222222
 2222222222222222
@@ -388,9 +406,14 @@ let getPlayerTwoSprite = 0
 let playerOneSpeed = 0
 let playerTwoSpeed = 0
 
+let playerOneInverted = false
+let playerTwoInverted = false
+
 let roundFastTunePlayback = ``
 
 let blankSpots = getAll(background)
+
+const powerUps = ["clock", "invert"]
 
 
 function endGame(playerWhoWon){
@@ -406,14 +429,22 @@ function endGame(playerWhoWon){
 }
 
 function spawnPowerUp(){
+  let powerUpIndex = Math.floor(Math.random() * 2)
+  console.log(powerUpIndex)
   let index = Math.floor(Math.random() * (blankSpots.length))
-  addSprite(blankSpots[index].x, blankSpots[index].y, clock)
+  if (powerUps[powerUpIndex] == "clock"){
+    addSprite(blankSpots[index].x, blankSpots[index].y, clock)
+  } else if (powerUps[powerUpIndex] == "invert"){
+    addSprite(blankSpots[index].x, blankSpots[index].y, invert)
+  }
+  
+  
 }
 
 function startTimer(){
   let played = false
-  let randomTimeOne = Math.floor(Math.random() * (25 - 5 + 1) + 5)
-  let randomTimeTwo = Math.floor(Math.random() * (25 - 5 + 1) + 5)
+  let randomTimeOne = Math.floor(Math.random() * (25 - 15 + 1) + 15)
+  let randomTimeTwo = Math.floor(Math.random() * (randomTimeOne - 10) + 10) - 5
   console.log(randomTimeOne)
   console.log(randomTimeTwo)
   runnerTimer -= 1
@@ -497,16 +528,39 @@ function checkIfTagged(player) {
   }
 }
 
-function checkPowerUp(){
-  if (tilesWith(tagger, clock).length >= 1){
+
+function clockPowerUp(role){
+  if (role == "tagger"){
     runnerTimer += 6
-    console.log("tagger delete xy" + getFirst(clock).x + " " + getFirst(clock).y)
-    getFirst(clock).remove()
+  } else {
+    runnerTimer -= 6
+  }
+  getFirst(clock).remove()
+}
+
+function invertPowerUp(player){
+  if (player == 1){
+    playerTwoInverted = true
+    setTimeout(() => {playerTwoInverted = false}, 3000)
+  } else if (player == 2){
+    playerOneInverted = true
+    setTimeout(() => {playerOneInverted = false}, 3000)
+  }
+  getFirst(invert).remove()
+}
+
+function checkPowerUp(player){
+  if (tilesWith(tagger, clock).length >= 1){
+    clockPowerUp("tagger")
   } 
   if (tilesWith(runner, clock).length >= 1){
-    runnerTimer -= 6
-    console.log("runner delete xy" + getFirst(clock).x + " " + getFirst(clock).y)
-    getFirst(clock).remove()
+    clockPowerUp("runner")
+  }
+  if (tilesWith(tagger, invert).length >= 1){
+    invertPowerUp(player)
+  }
+  if (tilesWith(runner, invert).length >= 1){
+    invertPowerUp(player)
   }
 }
 
@@ -522,7 +576,7 @@ function movePlayerOne(direction, role) {
   if (canMove == true){
     intervalPlayerOne = setInterval(() => {
     if (role == "tagger"){checkIfTagged(1)}
-    checkPowerUp()
+    checkPowerUp(1)
     if (direction == "w") {
       getPlayerOneSprite.y -= 1
     } else if (direction == "a") {
@@ -549,7 +603,7 @@ function movePlayerTwo(direction, role) {
   if (canMove == true){
     intervalPlayerTwo = setInterval(() => {
     if (role == "tagger"){checkIfTagged(2)}
-    checkPowerUp()
+    checkPowerUp(2)
     if (direction == "i") {
       getPlayerTwoSprite.y -= 1
     } else if (direction == "j") {
@@ -577,9 +631,15 @@ onInput("w", () => {
     start = true
     startTimer()
   }
-  if (!isRunner){
-    movePlayerOne("w", "tagger")
-  } else {movePlayerOne("w", "runner")}
+  if (!playerOneInverted){
+    if (!isRunner){
+      movePlayerOne("w", "tagger")
+    } else {movePlayerOne("w", "runner")}
+  } else {
+    if (!isRunner){
+      movePlayerOne("s", "tagger")
+    } else {movePlayerOne("s", "runner")}
+  }
   
 })
 
@@ -588,9 +648,15 @@ onInput("a", () => {
     start = true
     startTimer()
   }
-  if (!isRunner){
-    movePlayerOne("a", "tagger")
-  } else {movePlayerOne("a", "runner")}
+  if (!playerOneInverted){
+    if (!isRunner){
+      movePlayerOne("a", "tagger")
+    } else {movePlayerOne("a", "runner")}
+  } else {
+    if (!isRunner){
+      movePlayerOne("d", "tagger")
+    } else {movePlayerOne("d", "runner")}
+  }
 })
 
 
@@ -599,9 +665,15 @@ onInput("s", () => {
     start = true
     startTimer()
   }
-  if (!isRunner){
-    movePlayerOne("s", "tagger")
-  } else {movePlayerOne("s", "runner")}
+  if (!playerOneInverted){
+    if (!isRunner){
+      movePlayerOne("s", "tagger")
+    } else {movePlayerOne("s", "runner")}
+  } else {
+    if (!isRunner){
+      movePlayerOne("w", "tagger")
+    } else {movePlayerOne("w", "runner")}
+  }
 })
 
 onInput("d", () => {
@@ -609,9 +681,15 @@ onInput("d", () => {
     start = true
     startTimer()
   }
-  if (!isRunner){
-    movePlayerOne("d", "tagger")
-  } else {movePlayerOne("d", "runner")}
+  if (!playerOneInverted){
+    if (!isRunner){
+      movePlayerOne("d", "tagger")
+    } else {movePlayerOne("d", "runner")}
+  } else {
+    if (!isRunner){
+      movePlayerOne("a", "tagger")
+    } else {movePlayerOne("a", "runner")}
+  }
 })
 
 
@@ -620,9 +698,15 @@ onInput("i", () => {
     start = true
     startTimer()
   }
-  if (!isTagger){
-    movePlayerTwo("i", "runner")
-  } else {movePlayerTwo("i", "tagger")}
+  if (!playerTwoInverted){
+    if (!isTagger){
+      movePlayerTwo("i", "runner")
+    } else {movePlayerTwo("i", "tagger")}
+  } else {
+    if (!isTagger){
+      movePlayerTwo("k", "runner")
+    } else {movePlayerTwo("k", "tagger")}
+  }
 })
 
 onInput("j", () => {
@@ -630,9 +714,15 @@ onInput("j", () => {
     start = true
     startTimer()
   }
-  if (!isTagger){
-    movePlayerTwo("j", "runner")
-  } else {movePlayerTwo("j", "tagger")}
+  if (!playerTwoInverted){
+    if (!isTagger){
+      movePlayerTwo("j", "runner")
+    } else {movePlayerTwo("j", "tagger")}
+  } else {
+    if (!isTagger){
+      movePlayerTwo("l", "runner")
+    } else {movePlayerTwo("l", "tagger")}
+  }
   
 })
 
@@ -642,9 +732,15 @@ onInput("k", () => {
     start = true
     startTimer()
   }
-  if (!isTagger){
-    movePlayerTwo("k", "runner")
-  } else {movePlayerTwo("k", "tagger")}
+  if (!playerTwoInverted){
+    if (!isTagger){
+      movePlayerTwo("k", "runner")
+    } else {movePlayerTwo("k", "tagger")}
+  } else {
+    if (!isTagger){
+      movePlayerTwo("i", "runner")
+    } else {movePlayerTwo("i", "tagger")}
+  }
 })
 
 onInput("l", () => {
@@ -652,9 +748,15 @@ onInput("l", () => {
     start = true
     startTimer()
   }
-  if (!isTagger){
-    movePlayerTwo("l", "runner")
-  } else {movePlayerTwo("l", "tagger")}
+  if (!playerTwoInverted){
+    if (!isTagger){
+      movePlayerTwo("l", "runner")
+    } else {movePlayerTwo("l", "tagger")}
+  } else {
+    if (!isTagger){
+      movePlayerTwo("j", "runner")
+    } else {movePlayerTwo("j", "tagger")}
+  }
 })
 
 
