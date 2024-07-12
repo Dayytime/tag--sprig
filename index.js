@@ -12,6 +12,7 @@ const clock = "c"
 const invert = "i"
 const background = "b"
 const tp = "p"
+const speed = "s"
 
 const tagSFX = tune`
 124.48132780082987: C4^124.48132780082987 + D4^124.48132780082987 + E4^124.48132780082987 + F4^124.48132780082987 + G4^124.48132780082987,
@@ -123,6 +124,11 @@ const roundFastTune = tune`
 83.33333333333333: G4^83.33333333333333 + E4^83.33333333333333,
 83.33333333333333: G4^83.33333333333333 + E4^83.33333333333333,
 83.33333333333333: G4^83.33333333333333 + E4^83.33333333333333`
+const clockSFX = tune`
+84.26966292134831: A4-84.26966292134831 + B4-84.26966292134831 + C5-84.26966292134831 + D5-84.26966292134831 + E5-84.26966292134831,
+84.26966292134831,
+84.26966292134831: C4-84.26966292134831 + D4-84.26966292134831 + E4-84.26966292134831 + F4-84.26966292134831 + G4-84.26966292134831,
+2443.820224719101`
 
 setLegend(
   [tagger, bitmap`
@@ -226,6 +232,23 @@ LLLLLLLLLLLLLLLL`],
 ................
 .HHHHHHHHHHHHHH.
 .8HH8HH88HH88HH.
+................`],
+  [speed, bitmap`
+................
+................
+................
+................
+..3...3.........
+..33333.........
+..3333232323....
+..3333232323CC..
+..3333333333CCC.
+..3333333333CCC.
+..3333333333CCC.
+..1L1111L1L11L1.
+................
+................
+................
 ................`],
   [background, bitmap`
 2222222222222222
@@ -427,11 +450,13 @@ let playerTwoSpeed = 0
 let playerOneInverted = false
 let playerTwoInverted = false
 
+let boost = false
+
 let roundFastTunePlayback = ``
 
 let blankSpots = getAll(background)
 
-const powerUps = ["clock", "invert", "tp"]
+const powerUps = ["clock", "invert", "tp", "speed"]
 
 
 function endGame(playerWhoWon){
@@ -447,7 +472,7 @@ function endGame(playerWhoWon){
 }
 
 function spawnPowerUp(){
-  let powerUpIndex = Math.floor(Math.random() * 3)
+  let powerUpIndex = Math.floor(Math.random() * 4)
   console.log(powerUpIndex)
   let index = Math.floor(Math.random() * (blankSpots.length))
   if (powerUps[powerUpIndex] == "clock"){
@@ -456,6 +481,8 @@ function spawnPowerUp(){
     addSprite(blankSpots[index].x, blankSpots[index].y, invert)
   } else if (powerUps[powerUpIndex] == "tp"){
     addSprite(blankSpots[index].x, blankSpots[index].y, tp)
+  } else if (powerUps[powerUpIndex] == "speed"){
+    addSprite(blankSpots[index].x, blankSpots[index].y, speed)
   }
   
   
@@ -550,6 +577,7 @@ function checkIfTagged(player) {
 
 
 function clockPowerUp(role){
+  playTune(clockSFX)
   if (role == "tagger"){
     runnerTimer += 6
   } else {
@@ -582,6 +610,21 @@ function tpPowerUp(role){
   getFirst(tp).remove()
 }
 
+function speedPowerUp(player){
+  if (player == 1){
+    playerOneSpeed -= 35
+    boost = true
+    setTimeout(() => {playerOneSpeed += 35
+                      boost = false}, 3000)
+  } else {
+    playerTwoSpeed -= 35
+    boost = true
+    setTimeout(() => {playerTwoSpeed -= 35
+                      boost = false}, 3000)
+  }
+  getFirst(speed).remove()
+}
+
 function checkPowerUp(player, role){
 
   if (role == "tagger"){
@@ -594,6 +637,9 @@ function checkPowerUp(player, role){
     if (tilesWith(tagger, tp).length >= 1){
       tpPowerUp(role)
     }
+    if (tilesWith(tagger, speed).length >= 1){
+      speedPowerUp(player)
+    }
   } else if (role == "runner"){
     if (tilesWith(runner, clock).length >= 1){
       clockPowerUp(role)
@@ -605,14 +651,17 @@ function checkPowerUp(player, role){
     if (tilesWith(runner, tp).length >= 1){
       tpPowerUp(role)
     }
+    if (tilesWith(runner, speed).length >= 1){
+      speedPowerUp(player)
+    }
   }
 }
 
 function movePlayerOne(direction, role) {
-  if (role == "tagger"){
+  if (role == "tagger" && !boost){
     getPlayerOneSprite = getFirst(tagger)
     playerOneSpeed = 145
-  } else {
+  } else if (role == "runner" && !boost){
     getPlayerOneSprite = getFirst(runner)
     playerOneSpeed = 150
   }
@@ -636,10 +685,10 @@ function movePlayerOne(direction, role) {
 }
 
 function movePlayerTwo(direction, role) {
-  if (role == "tagger"){
+  if (role == "tagger" && !boost){
     getPlayerTwoSprite = getFirst(tagger)
     playerTwoSpeed = 145
-  } else {
+  } else if (role == "runner" && !boost){
     getPlayerTwoSprite = getFirst(runner)
     playerTwoSpeed = 150
   }
