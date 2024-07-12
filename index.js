@@ -129,6 +129,37 @@ const clockSFX = tune`
 84.26966292134831,
 84.26966292134831: C4-84.26966292134831 + D4-84.26966292134831 + E4-84.26966292134831 + F4-84.26966292134831 + G4-84.26966292134831,
 2443.820224719101`
+const invertSFX = tune`
+93.16770186335404: C4^93.16770186335404 + D4^93.16770186335404 + E4^93.16770186335404 + F4^93.16770186335404 + G4^93.16770186335404,
+93.16770186335404: B5^93.16770186335404 + A5^93.16770186335404 + G5^93.16770186335404 + F5^93.16770186335404 + E5^93.16770186335404,
+2795.031055900621`
+const tpSFX = tune`
+37.5: A4^37.5,
+37.5: A4^37.5,
+37.5: G4^37.5,
+37.5: G4^37.5,
+37.5: F4^37.5,
+37.5: E4^37.5,
+37.5: D4^37.5 + C4^37.5,
+37.5: C4^37.5,
+900`
+const speedSFX = tune`
+37.5: C4~37.5,
+37.5: C4~37.5,
+37.5: C4~37.5,
+37.5: D4~37.5,
+37.5: D4~37.5,
+37.5: E4~37.5,
+37.5: E4~37.5,
+37.5: F4~37.5,
+37.5: G4~37.5 + A4~37.5,
+37.5: B4~37.5 + A4~37.5,
+37.5: C5~37.5 + D5~37.5 + B4~37.5,
+37.5: E5~37.5 + F5~37.5 + G5~37.5 + A5~37.5 + D5~37.5,
+37.5: B5~37.5,
+712.5`
+const BLANK = tune`
+16000`
 
 setLegend(
   [tagger, bitmap`
@@ -419,7 +450,7 @@ wbbbbbbbbbbbwbbbbbbbrw
 wwwwwwwwwwwwwwwwwwwwww`
 ]
 
-let level = Math.floor(Math.random() * (levels.length - 1) + 1)
+let level = 0
 
 setMap(levels[level])
 
@@ -452,7 +483,8 @@ let playerTwoInverted = false
 
 let boost = false
 
-let roundFastTunePlayback = ``
+let roundFastTunePlayback = playTune(BLANK, Infinity)
+let roundTunePlayback = playTune(BLANK, Infinity)
 
 let blankSpots = getAll(background)
 
@@ -566,10 +598,12 @@ function roundEnd(playerWhoWon){
 function checkIfTagged(player) {
   if ((getFirst(tagger).x + 1 == getFirst(runner).x || getFirst(tagger).x - 1 == getFirst(runner).x) && getFirst(tagger).y == getFirst(runner).y) {
     roundTunePlayback.end()
+    roundFastTunePlayback.end()
     playTune(tagSFX)
     if (player == 1){roundEnd(1)} else {roundEnd(2)}
   } else if ((getFirst(tagger).y + 1 == getFirst(runner).y || getFirst(tagger).y - 1 == getFirst(runner).y) && getFirst(tagger).x == getFirst(runner).x) {
     roundTunePlayback.end()
+    roundFastTunePlayback.end()
     playTune(tagSFX)
     if (player == 1){roundEnd(1)} else {roundEnd(2)}
   }
@@ -587,6 +621,7 @@ function clockPowerUp(role){
 }
 
 function invertPowerUp(player){
+  playTune(invertSFX)
   if (player == 1){
     playerTwoInverted = true
     setTimeout(() => {playerTwoInverted = false}, 3000)
@@ -598,6 +633,7 @@ function invertPowerUp(player){
 }
 
 function tpPowerUp(role){
+  playTune(tpSFX)
   if (role == "tagger"){
     let index = Math.floor(Math.random() * (blankSpots.length))
     getFirst(runner).remove()
@@ -611,6 +647,7 @@ function tpPowerUp(role){
 }
 
 function speedPowerUp(player){
+  playTune(speedSFX)
   if (player == 1){
     playerOneSpeed -= 35
     boost = true
@@ -715,9 +752,31 @@ function movePlayerTwo(direction, role) {
 
 
 
-addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
-addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
-let roundTunePlayback = playTune(roundTune, Infinity)
+
+
+function startGame(){
+  level = Math.floor(Math.random() * (levels.length - 1) + 1)
+  setMap(levels[level])
+  blankSpots = getAll(background)
+  addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
+  addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
+  roundTunePlayback = playTune(roundTune, Infinity)
+}
+
+function changeTime(input){
+  if (runnerTimer > 10){
+    if (input == "a"){
+      runnerTimer -= 5
+  } else if (input == "d"){
+    runnerTimer += 5
+  }
+  }
+
+  clearText()
+  addText("Runner Timer is " + String(runnerTimer), {x:1, y:1, color: color`9`})
+}
+
+addText("Runner Timer is " + String(runnerTimer), {x:1, y:1, color: color`9`})
 
 onInput("w", () => {
   if (!start){
@@ -737,52 +796,67 @@ onInput("w", () => {
 })
 
 onInput("a", () => {
-  if (!start){
-    start = true
-    startTimer()
-  }
-  if (!playerOneInverted){
-    if (!isRunner){
-      movePlayerOne("a", "tagger")
-    } else {movePlayerOne("a", "runner")}
+  if (level == 0){
+    changeTime("a")
   } else {
-    if (!isRunner){
-      movePlayerOne("d", "tagger")
-    } else {movePlayerOne("d", "runner")}
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerOneInverted){
+      if (!isRunner){
+        movePlayerOne("a", "tagger")
+      } else {movePlayerOne("a", "runner")}
+    } else {
+      if (!isRunner){
+        movePlayerOne("d", "tagger")
+      } else {movePlayerOne("d", "runner")}
+    }
   }
+
 })
 
 
 onInput("s", () => {
-  if (!start){
-    start = true
-    startTimer()
-  }
-  if (!playerOneInverted){
-    if (!isRunner){
-      movePlayerOne("s", "tagger")
-    } else {movePlayerOne("s", "runner")}
+  if (level == 0){
+    
   } else {
-    if (!isRunner){
-      movePlayerOne("w", "tagger")
-    } else {movePlayerOne("w", "runner")}
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerOneInverted){
+      if (!isRunner){
+        movePlayerOne("s", "tagger")
+      } else {movePlayerOne("s", "runner")}
+    } else {
+      if (!isRunner){
+        movePlayerOne("w", "tagger")
+      } else {movePlayerOne("w", "runner")}
+    }
   }
+
 })
 
 onInput("d", () => {
-  if (!start){
-    start = true
-    startTimer()
-  }
-  if (!playerOneInverted){
-    if (!isRunner){
-      movePlayerOne("d", "tagger")
-    } else {movePlayerOne("d", "runner")}
+  if (level == 0){
+    changeTime("d")
   } else {
-    if (!isRunner){
-      movePlayerOne("a", "tagger")
-    } else {movePlayerOne("a", "runner")}
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerOneInverted){
+      if (!isRunner){
+        movePlayerOne("d", "tagger")
+      } else {movePlayerOne("d", "runner")}
+    } else {
+      if (!isRunner){
+        movePlayerOne("a", "tagger")
+      } else {movePlayerOne("a", "runner")}
+    }
   }
+
 })
 
 
