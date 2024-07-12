@@ -11,6 +11,7 @@ const runner = "r"
 const clock = "c"
 const invert = "i"
 const background = "b"
+const tp = "p"
 
 const tagSFX = tune`
 124.48132780082987: C4^124.48132780082987 + D4^124.48132780082987 + E4^124.48132780082987 + F4^124.48132780082987 + G4^124.48132780082987,
@@ -209,6 +210,23 @@ LLLLLLLLLLLLLLLL`],
 ..333...........
 ...33...........
 ....3...........`],
+  [tp, bitmap`
+................
+.H...HHHHHH.....
+.....HHH888.H..H
+.8..............
+...HHHHHHHHHH.8.
+....H8H8H8HH....
+8.............H.
+...HHHHHHHHHH...
+.H.HHH888H8H8...
+...............H
+8.8HHHHHHHHHHH..
+..H88HH8HH8HHH.8
+................
+.HHHHHHHHHHHHHH.
+.8HH8HH88HH88HH.
+................`],
   [background, bitmap`
 2222222222222222
 2222222222222222
@@ -413,7 +431,7 @@ let roundFastTunePlayback = ``
 
 let blankSpots = getAll(background)
 
-const powerUps = ["clock", "invert"]
+const powerUps = ["clock", "invert", "tp"]
 
 
 function endGame(playerWhoWon){
@@ -429,13 +447,15 @@ function endGame(playerWhoWon){
 }
 
 function spawnPowerUp(){
-  let powerUpIndex = Math.floor(Math.random() * 2)
+  let powerUpIndex = Math.floor(Math.random() * 3)
   console.log(powerUpIndex)
   let index = Math.floor(Math.random() * (blankSpots.length))
   if (powerUps[powerUpIndex] == "clock"){
     addSprite(blankSpots[index].x, blankSpots[index].y, clock)
   } else if (powerUps[powerUpIndex] == "invert"){
     addSprite(blankSpots[index].x, blankSpots[index].y, invert)
+  } else if (powerUps[powerUpIndex] == "tp"){
+    addSprite(blankSpots[index].x, blankSpots[index].y, tp)
   }
   
   
@@ -542,25 +562,49 @@ function invertPowerUp(player){
   if (player == 1){
     playerTwoInverted = true
     setTimeout(() => {playerTwoInverted = false}, 3000)
-  } else if (player == 2){
+  } else {
     playerOneInverted = true
     setTimeout(() => {playerOneInverted = false}, 3000)
   }
   getFirst(invert).remove()
 }
 
-function checkPowerUp(player){
-  if (tilesWith(tagger, clock).length >= 1){
-    clockPowerUp("tagger")
-  } 
-  if (tilesWith(runner, clock).length >= 1){
-    clockPowerUp("runner")
+function tpPowerUp(role){
+  if (role == "tagger"){
+    let index = Math.floor(Math.random() * (blankSpots.length))
+    getFirst(runner).remove()
+    addSprite(blankSpots[index].x, blankSpots[index].y, runner)
+  } else {
+    let index = Math.floor(Math.random() * (blankSpots.length))
+    getFirst(tagger).remove()
+    addSprite(blankSpots[index].x, blankSpots[index].y, tagger)
   }
-  if (tilesWith(tagger, invert).length >= 1){
-    invertPowerUp(player)
-  }
-  if (tilesWith(runner, invert).length >= 1){
-    invertPowerUp(player)
+  getFirst(tp).remove()
+}
+
+function checkPowerUp(player, role){
+
+  if (role == "tagger"){
+    if (tilesWith(tagger, clock).length >= 1){
+      clockPowerUp(role)
+    }
+    if (tilesWith(tagger, invert).length >= 1){
+      invertPowerUp(player)
+    }
+    if (tilesWith(tagger, tp).length >= 1){
+      tpPowerUp(role)
+    }
+  } else if (role == "runner"){
+    if (tilesWith(runner, clock).length >= 1){
+      clockPowerUp(role)
+    }
+  
+    if (tilesWith(runner, invert).length >= 1){
+      invertPowerUp(player)
+    }
+    if (tilesWith(runner, tp).length >= 1){
+      tpPowerUp(role)
+    }
   }
 }
 
@@ -576,7 +620,7 @@ function movePlayerOne(direction, role) {
   if (canMove == true){
     intervalPlayerOne = setInterval(() => {
     if (role == "tagger"){checkIfTagged(1)}
-    checkPowerUp(1)
+    checkPowerUp(1, role)
     if (direction == "w") {
       getPlayerOneSprite.y -= 1
     } else if (direction == "a") {
@@ -603,7 +647,7 @@ function movePlayerTwo(direction, role) {
   if (canMove == true){
     intervalPlayerTwo = setInterval(() => {
     if (role == "tagger"){checkIfTagged(2)}
-    checkPowerUp(2)
+    checkPowerUp(2, role)
     if (direction == "i") {
       getPlayerTwoSprite.y -= 1
     } else if (direction == "j") {
