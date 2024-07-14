@@ -458,6 +458,8 @@ setPushables({
   [tagger]: []
 })
 
+let randomLevels = true
+
 let intervalPlayerOne = 0
 let intervalPlayerTwo = 0
 let intervalRunnerTimer = 0
@@ -489,6 +491,7 @@ let roundTunePlayback = playTune(BLANK, Infinity)
 let blankSpots = getAll(background)
 
 const powerUps = ["clock", "invert", "tp", "speed"]
+let powerUpsOn = true
 
 
 function endGame(playerWhoWon){
@@ -755,6 +758,7 @@ function movePlayerTwo(direction, role) {
 
 
 function startGame(){
+  clearText()
   level = Math.floor(Math.random() * (levels.length - 1) + 1)
   setMap(levels[level])
   blankSpots = getAll(background)
@@ -764,34 +768,93 @@ function startGame(){
 }
 
 function changeTime(input){
-  if (runnerTimer > 10){
-    if (input == "a"){
-      runnerTimer -= 5
+  if (input == "a" && runnerTimer > 10){
+    runnerTimer -= 5
   } else if (input == "d"){
     runnerTimer += 5
   }
-  }
 
   clearText()
-  addText("Runner Timer is " + String(runnerTimer), {x:1, y:1, color: color`9`})
+  addText("Tag!", {x:8, y:1, color: color`3`})
+  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
+  if (powerUpsOn){
+    addText("Power Ups On", {x:4, y:6, color: color`3`})
+  } else {
+    addText("Power Ups Off", {x:4, y:6, color: color`3`})
+  }
+  if (randomLevels){
+    addText("Random Levels On", {x:2, y:9, color: color`5`})
+  } else {
+    addText("Random Levels Off", {x:2, y:9, color: color`5`})
+  }
 }
 
-addText("Runner Timer is " + String(runnerTimer), {x:1, y:1, color: color`9`})
+function powerUpsToggle(){
+  powerUpsOn = !powerUpsOn
+  clearText()
+  if (powerUpsOn){
+    addText("Power Ups On", {x:4, y:6, color: color`3`})
+  } else {
+    addText("Power Ups Off", {x:4, y:6, color: color`3`})
+  }
+
+  if (randomLevels){
+    addText("Random Levels On", {x:2, y:9, color: color`5`})
+  } else {
+    addText("Random Levels Off", {x:2, y:9, color: color`5`})
+  }
+
+  addText("Tag!", {x:8, y:1, color: color`3`})
+  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
+  
+}
+
+function randomLevelsToggle(){
+  randomLevels = !randomLevels
+  clearText()
+  if (randomLevels){
+    addText("Random Levels On", {x:2, y:9, color: color`5`})
+  } else {
+    addText("Random Levels Off", {x:2, y:9, color: color`5`})
+  }
+
+  if (powerUpsOn){
+    addText("Power Ups On", {x:4, y:6, color: color`3`})
+  } else {
+    addText("Power Ups Off", {x:4, y:6, color: color`3`})
+  }
+
+  addText("Tag!", {x:8, y:1, color: color`3`})
+  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
+  
+}
+
+addText("Tag!", {x:8, y:1, color: color`3`})
+addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
+addText("Power Ups On", {x:4, y:6, color: color`3`})
+addText("Random Levels On", {x:2, y:9, color: color`5`})
+addText("Right Button To Start!", {x:1, y:12, color: color`4`})
+
 
 onInput("w", () => {
-  if (!start){
-    start = true
-    startTimer()
-  }
-  if (!playerOneInverted){
-    if (!isRunner){
-      movePlayerOne("w", "tagger")
-    } else {movePlayerOne("w", "runner")}
+  if (level == 0){
+    powerUpsToggle()
   } else {
-    if (!isRunner){
-      movePlayerOne("s", "tagger")
-    } else {movePlayerOne("s", "runner")}
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerOneInverted){
+      if (!isRunner){
+        movePlayerOne("w", "tagger")
+      } else {movePlayerOne("w", "runner")}
+    } else {
+      if (!isRunner){
+        movePlayerOne("s", "tagger")
+      } else {movePlayerOne("s", "runner")}
+    }
   }
+
   
 })
 
@@ -819,7 +882,7 @@ onInput("a", () => {
 
 onInput("s", () => {
   if (level == 0){
-    
+    randomLevelsToggle()
   } else {
     if (!start){
       start = true
@@ -861,69 +924,83 @@ onInput("d", () => {
 
 
 onInput("i", () => {
-  if (!start){
-    start = true
-    startTimer()
+  if (level != 0){
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerTwoInverted){
+      if (!isTagger){
+        movePlayerTwo("i", "runner")
+      } else {movePlayerTwo("i", "tagger")}
+    } else {
+      if (!isTagger){
+        movePlayerTwo("k", "runner")
+      } else {movePlayerTwo("k", "tagger")}
+    }
   }
-  if (!playerTwoInverted){
-    if (!isTagger){
-      movePlayerTwo("i", "runner")
-    } else {movePlayerTwo("i", "tagger")}
-  } else {
-    if (!isTagger){
-      movePlayerTwo("k", "runner")
-    } else {movePlayerTwo("k", "tagger")}
-  }
+
 })
 
 onInput("j", () => {
-  if (!start){
-    start = true
-    startTimer()
+  if (level != 0){
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerTwoInverted){
+      if (!isTagger){
+        movePlayerTwo("j", "runner")
+      } else {movePlayerTwo("j", "tagger")}
+    } else {
+      if (!isTagger){
+        movePlayerTwo("l", "runner")
+      } else {movePlayerTwo("l", "tagger")}
+    }
   }
-  if (!playerTwoInverted){
-    if (!isTagger){
-      movePlayerTwo("j", "runner")
-    } else {movePlayerTwo("j", "tagger")}
-  } else {
-    if (!isTagger){
-      movePlayerTwo("l", "runner")
-    } else {movePlayerTwo("l", "tagger")}
-  }
+
   
 })
 
 
 onInput("k", () => {
-  if (!start){
-    start = true
-    startTimer()
+  if (level != 0){
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerTwoInverted){
+      if (!isTagger){
+        movePlayerTwo("k", "runner")
+      } else {movePlayerTwo("k", "tagger")}
+    } else {
+      if (!isTagger){
+        movePlayerTwo("i", "runner")
+      } else {movePlayerTwo("i", "tagger")}
+    }
   }
-  if (!playerTwoInverted){
-    if (!isTagger){
-      movePlayerTwo("k", "runner")
-    } else {movePlayerTwo("k", "tagger")}
-  } else {
-    if (!isTagger){
-      movePlayerTwo("i", "runner")
-    } else {movePlayerTwo("i", "tagger")}
-  }
+
 })
 
 onInput("l", () => {
-  if (!start){
-    start = true
-    startTimer()
-  }
-  if (!playerTwoInverted){
-    if (!isTagger){
-      movePlayerTwo("l", "runner")
-    } else {movePlayerTwo("l", "tagger")}
+  if (level == 0){
+    startGame()
   } else {
-    if (!isTagger){
-      movePlayerTwo("j", "runner")
-    } else {movePlayerTwo("j", "tagger")}
+    if (!start){
+      start = true
+      startTimer()
+    }
+    if (!playerTwoInverted){
+      if (!isTagger){
+        movePlayerTwo("l", "runner")
+      } else {movePlayerTwo("l", "tagger")}
+    } else {
+      if (!isTagger){
+        movePlayerTwo("j", "runner")
+      } else {movePlayerTwo("j", "tagger")}
+    }
   }
+
 })
 
 
