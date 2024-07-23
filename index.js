@@ -473,6 +473,7 @@ let playerOneScore = 0
 let playerTwoScore = 0
 
 let runnerTimer = 30
+let resetRunnerTimer = 0
 
 let getPlayerOneSprite = 0
 let getPlayerTwoSprite = 0
@@ -546,11 +547,11 @@ function startTimer(){
     playTune(runnerWinSFX)
     if (isRunner){roundEnd(1)} else {roundEnd(2)}
   }
-  if (runnerTimer == randomTimeOne){
+  if (runnerTimer == randomTimeOne && powerUpsOn){
     randomTimeOne = -11
     spawnPowerUp()
   }
-  if (runnerTimer == randomTimeTwo){
+  if (runnerTimer == randomTimeTwo && powerUpsOn){
     randomTimeTwo = -11
     spawnPowerUp()
   }
@@ -579,11 +580,19 @@ function roundEnd(playerWhoWon){
   } else {
     setTimeout(() => {
     clearText()
-    level = Math.floor(Math.random() * (levels.length - 1) + 1)
+    if (randomLevels){
+      level = Math.floor(Math.random() * (levels.length - 1) + 1)
+    } else {
+      level += 1
+      if (level >= levels.length){
+        level = 1
+      }
+    }
+    
     setMap(levels[level])
     blankSpots = getAll(background)
     roundTunePlayback = playTune(roundTune, Infinity)
-    runnerTimer = 30
+    runnerTimer = resetRunnerTimer
     addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
     addText(String(playerOneScore) + "-" + String(playerTwoScore), { x: 3, y: 1, color: color`3` })
     isRunner = !isRunner
@@ -755,11 +764,29 @@ function movePlayerTwo(direction, role) {
 
 
 
-
+function resetMenuText(){
+  clearText()
+  addText("Tag!", {x:8, y:1, color: color`3`})
+  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
+  if (powerUpsOn){
+    addText("Power Ups On", {x:4, y:6, color: color`3`})
+  } else {
+    addText("Power Ups Off", {x:4, y:6, color: color`3`})
+  }
+  if (randomLevels){
+    addText("Random Levels On", {x:2, y:9, color: color`5`})
+  } else {
+    addText("Random Levels Off", {x:2, y:9, color: color`5`})
+  }
+  addText("Right Button To Start!", {x:1, y:12, color: color`4`})
+}
 
 function startGame(){
   clearText()
-  level = Math.floor(Math.random() * (levels.length - 1) + 1)
+  if (randomLevels){
+    level = Math.floor(Math.random() * (levels.length - 1) + 1)
+  } else {level += 1}
+  
   setMap(levels[level])
   blankSpots = getAll(background)
   addText(String(runnerTimer), {x: 9, y: 1, color: color`9`})
@@ -773,157 +800,42 @@ function changeTime(input){
   } else if (input == "d"){
     runnerTimer += 5
   }
-
-  clearText()
-  addText("Tag!", {x:8, y:1, color: color`3`})
-  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
-  if (powerUpsOn){
-    addText("Power Ups On", {x:4, y:6, color: color`3`})
-  } else {
-    addText("Power Ups Off", {x:4, y:6, color: color`3`})
-  }
-  if (randomLevels){
-    addText("Random Levels On", {x:2, y:9, color: color`5`})
-  } else {
-    addText("Random Levels Off", {x:2, y:9, color: color`5`})
-  }
+  resetRunnerTimer = runnerTimer
+  resetMenuText()
 }
 
 function powerUpsToggle(){
   powerUpsOn = !powerUpsOn
-  clearText()
-  if (powerUpsOn){
-    addText("Power Ups On", {x:4, y:6, color: color`3`})
-  } else {
-    addText("Power Ups Off", {x:4, y:6, color: color`3`})
-  }
-
-  if (randomLevels){
-    addText("Random Levels On", {x:2, y:9, color: color`5`})
-  } else {
-    addText("Random Levels Off", {x:2, y:9, color: color`5`})
-  }
-
-  addText("Tag!", {x:8, y:1, color: color`3`})
-  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
-  
+  resetMenuText()
 }
 
 function randomLevelsToggle(){
   randomLevels = !randomLevels
-  clearText()
-  if (randomLevels){
-    addText("Random Levels On", {x:2, y:9, color: color`5`})
-  } else {
-    addText("Random Levels Off", {x:2, y:9, color: color`5`})
-  }
-
-  if (powerUpsOn){
-    addText("Power Ups On", {x:4, y:6, color: color`3`})
-  } else {
-    addText("Power Ups Off", {x:4, y:6, color: color`3`})
-  }
-
-  addText("Tag!", {x:8, y:1, color: color`3`})
-  addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
-  
+  resetMenuText()
 }
 
-addText("Tag!", {x:8, y:1, color: color`3`})
-addText("Runner Timer is " + String(runnerTimer), {x:1, y:3, color: color`9`})
-addText("Power Ups On", {x:4, y:6, color: color`3`})
-addText("Random Levels On", {x:2, y:9, color: color`5`})
-addText("Right Button To Start!", {x:1, y:12, color: color`4`})
+resetRunnerTimer = runnerTimer
+resetMenuText()
 
 
-onInput("w", () => {
-  if (level == 0){
-    powerUpsToggle()
-  } else {
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerOneInverted){
-      if (!isRunner){
-        movePlayerOne("w", "tagger")
-      } else {movePlayerOne("w", "runner")}
-    } else {
-      if (!isRunner){
-        movePlayerOne("s", "tagger")
-      } else {movePlayerOne("s", "runner")}
-    }
+
+function playerOneInput(direction, oppositeDirection){
+  if (!start){
+    start = true
+    startTimer()
   }
-
-  
-})
-
-onInput("a", () => {
-  if (level == 0){
-    changeTime("a")
+  if (!playerOneInverted){
+    if (!isRunner){
+      movePlayerOne(direction, "tagger")
+    } else {movePlayerOne(direction, "runner")}
   } else {
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerOneInverted){
-      if (!isRunner){
-        movePlayerOne("a", "tagger")
-      } else {movePlayerOne("a", "runner")}
-    } else {
-      if (!isRunner){
-        movePlayerOne("d", "tagger")
-      } else {movePlayerOne("d", "runner")}
-    }
+    if (!isRunner){
+      movePlayerOne(oppositeDirection, "tagger")
+    } else {movePlayerOne(oppositeDirection, "runner")}
   }
+}
 
-})
-
-
-onInput("s", () => {
-  if (level == 0){
-    randomLevelsToggle()
-  } else {
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerOneInverted){
-      if (!isRunner){
-        movePlayerOne("s", "tagger")
-      } else {movePlayerOne("s", "runner")}
-    } else {
-      if (!isRunner){
-        movePlayerOne("w", "tagger")
-      } else {movePlayerOne("w", "runner")}
-    }
-  }
-
-})
-
-onInput("d", () => {
-  if (level == 0){
-    changeTime("d")
-  } else {
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerOneInverted){
-      if (!isRunner){
-        movePlayerOne("d", "tagger")
-      } else {movePlayerOne("d", "runner")}
-    } else {
-      if (!isRunner){
-        movePlayerOne("a", "tagger")
-      } else {movePlayerOne("a", "runner")}
-    }
-  }
-
-})
-
-
-onInput("i", () => {
+function playerTwoInput(direction, oppositeDirection){
   if (level != 0){
     if (!start){
       start = true
@@ -931,81 +843,23 @@ onInput("i", () => {
     }
     if (!playerTwoInverted){
       if (!isTagger){
-        movePlayerTwo("i", "runner")
-      } else {movePlayerTwo("i", "tagger")}
+        movePlayerTwo(direction, "runner")
+      } else {movePlayerTwo(direction, "tagger")}
     } else {
       if (!isTagger){
-        movePlayerTwo("k", "runner")
-      } else {movePlayerTwo("k", "tagger")}
+        movePlayerTwo(oppositeDirection, "runner")
+      } else {movePlayerTwo(oppositeDirection, "tagger")}
     }
   }
+}
 
-})
-
-onInput("j", () => {
-  if (level != 0){
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerTwoInverted){
-      if (!isTagger){
-        movePlayerTwo("j", "runner")
-      } else {movePlayerTwo("j", "tagger")}
-    } else {
-      if (!isTagger){
-        movePlayerTwo("l", "runner")
-      } else {movePlayerTwo("l", "tagger")}
-    }
-  }
-
-  
-})
+onInput("w", () => {if (level == 0) {powerUpsToggle()} else {playerOneInput("w", "s")}})
+onInput("a", () => {if (level == 0) {changeTime("a")} else {playerOneInput("a", "d")}})
+onInput("s", () => {if (level == 0) {randomLevelsToggle()} else {playerOneInput("s", "w")}})
+onInput("d", () => {if (level == 0) {changeTime("d")} else {playerOneInput("d", "a")}})
 
 
-onInput("k", () => {
-  if (level != 0){
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerTwoInverted){
-      if (!isTagger){
-        movePlayerTwo("k", "runner")
-      } else {movePlayerTwo("k", "tagger")}
-    } else {
-      if (!isTagger){
-        movePlayerTwo("i", "runner")
-      } else {movePlayerTwo("i", "tagger")}
-    }
-  }
-
-})
-
-onInput("l", () => {
-  if (level == 0){
-    startGame()
-  } else {
-    if (!start){
-      start = true
-      startTimer()
-    }
-    if (!playerTwoInverted){
-      if (!isTagger){
-        movePlayerTwo("l", "runner")
-      } else {movePlayerTwo("l", "tagger")}
-    } else {
-      if (!isTagger){
-        movePlayerTwo("j", "runner")
-      } else {movePlayerTwo("j", "tagger")}
-    }
-  }
-
-})
-
-
-
-
-afterInput(() => {
-
-})
+onInput("i", () => {playerTwoInput("i", "k")})
+onInput("j", () => {playerTwoInput("j", "l")})
+onInput("k", () => {playerTwoInput("k", "i")})
+onInput("l", () => {if (level == 0) {startGame()} else {playerTwoInput("l", "j")}})
